@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VoidCraft - Arduino & Siber Güvenlik</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+      overflow-x: hidden;
+      background: #0e0e15;
+      position: relative;
+    }
+
+    /* YAĞMUR EFEKTİ */
+    .rain {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .drop {
+      position: absolute;
+      width: 2px;
+      height: 20px;
+      background: rgba(255, 255, 255, 0.2);
+      animation: fall linear infinite;
+      border-radius: 50%;
+    }
+    @keyframes fall {
+      to {
+        transform: translateY(100vh);
+      }
+    }
+
+    /* HEADER */
+    header {
+      text-align: center;
+      padding: 20px 0 10px;
+      position: relative;
+      z-index: 10;
+    }
+    header img {
+      height: 100px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2.2em;
+      margin: 10px 0 20px;
+      text-align: center;
+    }
+
+    .insta-link {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 14px;
+      position: relative;
+      z-index: 10;
+    }
+    .insta-link a {
+      color: #00bfff;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+    .insta-link a:hover {
+      color: #00a3cc;
+    }
+
+    /* HAMBURGER MENU */
+    .hamburger {
+      position: fixed;
+      top: 20px;
+      right: 60px;
+      width: 36px;
+      height: 28px;
+      cursor: pointer;
+      z-index: 1010;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .hamburger div {
+      width: 100%;
+      height: 4px;
+      background: #ffffff;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+    .hamburger.active div:nth-child(1) {
+      transform: rotate(45deg) translate(8px, 8px);
+    }
+    .hamburger.active div:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.active div:nth-child(3) {
+      transform: rotate(-45deg) translate(8px, -8px);
+    }
+
+    /* MENÜ */
+    .menu {
+      position: fixed;
+      top: 0;
+      right: -300px;
+      width: 300px;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.95);
+      backdrop-filter: blur(8px);
+      padding: 80px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      transition: right 0.3s ease;
+      z-index: 1000;
+      box-shadow: -5px 0 15px rgba(0, 0, 0, 0.5);
+    }
+    .menu.active {
+      right: 0;
+    }
+    .menu a {
+      color: #00bfff;
+      padding: 15px 20px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.1em;
+      border-radius: 8px;
+      margin: 5px 0;
+      transition: all 0.3s ease;
+    }
+    .menu a:hover {
+      background: #005f8c;
+      transform: translateX(5px);
+      color: #ffffff;
+    }
+
+    /* SEPET BUTONU */
+    #cartButton {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #00bfff;
+      border: none;
+      color: #000;
+      padding: 10px 16px;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 1010;
+      box-shadow: 0 0 10px #00bfffaa;
+      user-select: none;
+      transition: transform 0.2s ease, background 0.3s ease;
+    }
+    #cartButton:hover {
+      transform: scale(1.05);
+      background: #00a3cc;
+    }
+
+    /* SEPET PANELİ */
+    #cartPanel {
+      position: fixed;
+      top: 60px;
+      right: 20px;
+      width: 320px;
+      max-height: 70vh;
+      background: rgba(0,0,0,0.85);
+      border-radius: 10px;
+      box-shadow: 0 0 15px #00bfffaa;
+      padding: 15px;
+      overflow-y: auto;
+      z-index: 1050;
+      display: none;
+      color: white;
+    }
+    #cartPanel h3 {
+      margin-bottom: 15px;
+      border-bottom: 1px solid #00bfff;
+      padding-bottom: 5px;
+    }
+    #cartItems {
+      list-style: none;
+      max-height: 45vh;
+      overflow-y: auto;
+      margin-bottom: 10px;
+    }
+    #cartItems li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #222;
+      font-size: 0.95em;
+    }
+    #cartItems li .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    #cartItems li .qty-controls button {
+      padding: 4px 8px;
+      background: #0080ff;
+      border: none;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      user-select: none;
+    }
+    #cartItems li .qty-controls button:hover {
+      background: #00bfff;
+    }
+    #cartItems li .qty-controls input {
+      width: 40px;
+      text-align: center;
+      border-radius: 5px;
+      border: none;
+      font-size: 1em;
+    }
+    #cartTotal {
+      font-weight: bold;
+      font-size: 1.1em;
+      text-align: right;
+      margin-top: 5px;
+    }
+    #clearCartBtn {
+      margin-top: 10px;
+      background: #900;
+      border: none;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      user-select: none;
+      width: 100%;
+      font-weight: bold;
+    }
+    #clearCartBtn:hover {
+      background: #c00;
+    }
+
+    /* ÜRÜNLER */
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      padding: 20px 30px 50px;
+      position: relative;
+      z-index: 5;
+      max-width: 1200px;
+      margin: 0 auto 80px;
+    }
+    .product {
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(8px);
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 0 10px #00bfff33;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+    .product:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 20px #00bfff77;
+    }
+    .product img {
+      width: 100%;
+      border-radius: 10px;
+      object-fit: cover;
+      height: 160px;
+      margin-bottom: 12px;
+    }
+    .product h3 {
+      font-size: 1.3em;
+      margin-bottom: 8px;
+    }
+    .product p {
+      flex-grow: 1;
+      font-size: 0.9em;
+      color: #ddd;
+      margin-bottom: 10px;
+    }
+    .price-stock {
+      font-weight: 700;
+      font-size: 1em;
+      margin-bottom: 10px;
+    }
+    .add-to-cart {
+      background: #00bfff;
+      border: none;
+      color: black;
+      padding: 10px 0;
+      border-radius: 7px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      user-select: none;
+    }
+    .add-to-cart:hover {
+      background: #0099dd;
+      transform: scale(1.02);
+    }
+
+    /* ADMIN PANEL */
+    .admin-panel {
+      max-width: 600px;
+      margin: 0 auto 50px;
+      padding: 25px 30px;
+      background: rgba(0,0,0,0.75);
+      border-radius: 15px;
+      border: 2px solid #00bfff;
+      box-shadow: 0 0 15px #00bfff55;
+      color: white;
+      display: none;
+      z-index: 10;
+      position: relative;
+    }
+    .admin-panel h2 {
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    .admin-panel input[type="text"],
+    .admin-panel input[type="number"],
+    .admin-panel select {
+      width: 100%;
+      padding: 10px 12px;
+      margin: 8px 0 15px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+    }
+    .admin-panel label {
+      font-weight: 600;
+      display: block;
+      margin-top: 15px;
+    }
+    .admin-panel button {
+      background: #00bfff;
+      border: none;
+      padding: 12px 20px;
+      font-size: 1em;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      user-select: none;
+      width: 100%;
+      margin-top: 10px;
+    }
+    .admin-panel button:hover {
+      background: #0099dd;
+    }
+    .admin-panel #logoutBtn {
+      background: #900;
+      margin-top: 30px;
+    }
+    .admin-panel #logoutBtn:hover {
+      background: #c00;
+    }
+
+    /* LOGIN */
+    .login {
+      max-width: 300px;
+      margin: 0 auto 50px;
+      padding: 20px 30px;
+      background: rgba(0,0,0,0.75);
+      border-radius: 15px;
+      border: 2px solid #00bfff;
+      box-shadow: 0 0 15px #00bfff55;
+      color: white;
+      text-align: center;
+      position: relative;
+      z-index: 10;
+    }
+    .login input[type="password"] {
+      width: 100%;
+      padding: 12px 15px;
+      margin: 15px 0 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1em;
+    }
+    .login button {
+      background: #00bfff;
+      border: none;
+      padding: 12px 20px;
+      font-weight: bold;
+      font-size: 1em;
+      border-radius: 10px;
+      cursor: pointer;
+      user-select: none;
+      width: 100%;
+    }
+    .login button:hover {
+      background: #0099dd;
+    }
+
+    /* CATEGORY SIDEBAR */
+    #sidebar {
+      position: fixed;
+      top: 140px;
+      left: 20px;
+      background: rgba(0,0,0,0.75);
+      border-radius: 10px;
+      width: 180px;
+      padding: 10px;
+      z-index: 9;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+    #sidebar a {
+      color: #00bfff;
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s ease;
+      user-select: none;
+    }
+    #sidebar a:hover,
+    #sidebar a.active {
+      background: #005f8c;
+      color: white;
+      transform: scale(1.02);
+    }
+
+    /* SORUMLULUK REDDİ BUTONU */
+    #disclaimerBtn {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ff5c33;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 25px;
+      font-weight: bold;
+      font-size: 1em;
+      cursor: pointer;
+      color: white;
+      box-shadow: 0 0 15px #ff5c33aa;
+      user-select: none;
+      z-index: 1100;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+    #disclaimerBtn:hover {
+      background: #ff3b00;
+      transform: scale(1.05);
+    }
+
+    #disclaimerBox {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: 90%;
+      background: rgba(255, 92, 51, 0.95);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 15px;
+      font-weight: 600;
+      font-size: 0.95em;
+      text-align: center;
+      box-shadow: 0 0 20px #ff5c3377;
+      display: none;
+      z-index: 1101;
+      user-select: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .hamburger {
+        right: 50px;
+      }
+      .menu {
+        width: 100%;
+        right: -100%;
+      }
+      #sidebar {
+        position: static;
+        width: auto;
+        height: auto;
+        max-height: none;
+        flex-direction: row;
+        overflow-x: auto;
+        margin: 0 0 20px;
+        padding: 5px 10px;
+      }
+      #sidebar a {
+        flex: 1 0 auto;
+        text-align: center;
+        border-radius: 15px;
+      }
+      .products {
+        padding: 10px 15px 60px;
+      }
+      #cartPanel {
+        width: 90vw;
+        right: 5vw;
+        max-height: 50vh;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- YAĞMUR EFEKTİ -->
+  <div class="rain" id="rain"></div>
+
+  <header>
+    <img src="https://i.postimg.cc/XByjjL9t/logo.png" alt="VoidCraft Logo" />
+  </header>
+
+  <h1>VoidCraft Arduino & Siber Güvenlik Marketi</h1>
+
+  <div class="insta-link">
+    <a href="https://www.instagram.com/_voidcraft__/?igsh=MXZ5cGE0aG1mMGh5dw==" target="_blank" rel="noopener noreferrer">
+      @_voidcraft__ Instagram’da!
+    </a>
+  </div>
+
+  <!-- Hamburger Menü Butonu -->
+  <div class="hamburger" id="hamburger" aria-label="Menü aç/kapa" role="button" tabindex="0" aria-expanded="false">
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+
+  <!-- Menü -->
+  <nav class="menu" id="menu" aria-hidden="true">
+    <!-- Kategoriler JS ile doldurulacak -->
+  </nav>
+
+  <!-- Sepet Butonu -->
+  <button id="cartButton" onclick="toggleCart()" aria-label="Sepeti aç/kapa">
+    Sepet (<span id="cartCount">0</span>)
+  </button>
+
+  <!-- Sepet Paneli -->
+  <div id="cartPanel" role="region" aria-label="Alışveriş Sepeti">
+    <h3>Sepetiniz</h3>
+    <ul id="cartItems"></ul>
+    <div id="cartTotal">Toplam: ₺0.00</div>
+    <button id="clearCartBtn" onclick="clearCart()">Sepeti Temizle</button>
+  </div>
+
+  <!-- Kategori Sidebar -->
+  <div id="sidebar"></div>
+
+  <!-- Ürünler -->
+  <div class="products" id="productList"></div>
+
+  <!-- Sorumluluk Reddi Butonu -->
+  <button id="disclaimerBtn" onclick="toggleDisclaimer()">Sorumluluk Reddi</button>
+
+  <div id="disclaimerBox" role="alert" aria-live="assertive">
+    <p>VoidCraft tarafından satılan ESP Deauther cihazları sadece test amaçlıdır. Cihazların kullanımıyla doğabilecek her türlü yasal sorumluluk kullanıcıya aittir. Site hiçbir şekilde bu cihazların yanlış veya yasa dışı kullanımından sorumlu tutulamaz.</p>
+  </div>
+
+  <!-- Admin Giriş -->
+  <div class="login" id="loginBox">
+    <h2>Admin Panel Girişi</h2>
+    <input type="password" id="adminPass" placeholder="Şifre" aria-label="Admin şifresi" />
+    <button onclick="checkPass()">Giriş</button>
+  </div>
+
+  <!-- Admin Panel -->
+  <div class="admin-panel" id="adminPanel">
+    <h2>Yeni Ürün Ekle</h2>
+    <input type="text" id="prodName" placeholder="Ürün Adı" />
+    <input type="text" id="prodDesc" placeholder="Açıklama" />
+    <input type="text" id="prodImg" placeholder="Görsel URL" />
+    <select id="prodCat"></select>
+    <button onclick="addProduct()">Ürünü Ekle</button>
+
+    <h3>Yeni Kategori Ekle</h3>
+    <input type="text" id="newCategory" placeholder="Kategori Adı" />
+    <button onclick="addCategory()">Kategori Ekle</button>
+
+    <h3>Kategori Sil</h3>
+    <select id="delCategory"></select>
+    <button onclick="deleteCategory()">Kategori Sil</button>
+
+    <h3>Ürün Sil</h3>
+    <select id="delProduct"></select>
+    <button onclick="deleteProduct()">Ürünü Sil</button>
+
+    <button id="logoutBtn" onclick="logoutAdmin()">ÇIKIŞ</button>
+  </div>
+
+  <footer>
+    © 2025 VoidCraft. Tüm hakları saklıdır.
+  </footer>
+
+  <script>
+    let productList = [];
+    let categories = [];
+    let filter = "Tümü";
+    let isAdmin = false;
+    let cart = {};
+
+    window.onload = () => {
+      // Veri oku veya başlat
+      productList = JSON.parse(localStorage.getItem("voidcraft_products")) || [];
+      categories = JSON.parse(localStorage.getItem("voidcraft_categories")) || ["Arduino", "Siber Güvenlik", "ESP Deauther"];
+      cart = JSON.parse(localStorage.getItem("voidcraft_cart")) || {};
+      updateCategorySelect();
+      updateSidebar();
+      updateMenu();
+      updateDeleteProductSelect();
+      renderProducts();
+      updateCartDisplay();
+      generateRain();
+      initializeHamburgerMenu();
+      document.getElementById("adminPanel").style.display = "none";
+    };
+
+    // Yağmur damlalarını üret
+    function generateRain() {
+      const rain = document.getElementById("rain");
+      rain.innerHTML = "";
+      for (let i = 0; i < 150; i++) {
+        const drop = document.createElement("div");
+        drop.classList.add("drop");
+        drop.style.left = `${Math.random() * 100}%`;
+        drop.style.animationDuration = `${1.0 + Math.random() * 2.0}s`;
+        drop.style.animationDelay = `${Math.random() * 5}s`;
+        rain.appendChild(drop);
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem("voidcraft_products", JSON.stringify(productList));
+      localStorage.setItem("voidcraft_categories", JSON.stringify(categories));
+      localStorage.setItem("voidcraft_cart", JSON.stringify(cart));
+    }
+
+    /* HAMBURGER MENU */
+    function initializeHamburgerMenu() {
+      const hamburger = document.getElementById("hamburger");
+      const menu = document.getElementById("menu");
+
+      // Ensure initial state
+      hamburger.classList.remove("active");
+      menu.classList.remove("active");
+      hamburger.setAttribute("aria-expanded", "false");
+      menu.setAttribute("aria-hidden", "true");
+
+      hamburger.addEventListener("click", () => {
+        const isActive = !hamburger.classList.contains("active");
+        hamburger.classList.toggle("active", isActive);
+        menu.classList.toggle("active", isActive);
+        hamburger.setAttribute("aria-expanded", isActive);
+        menu.setAttribute("aria-hidden", !isActive);
+        if (isActive) {
+          closeCart();
+        }
+      });
+
+      hamburger.addEventListener("keypress", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          hamburger.click();
+        }
+      });
+    }
+
+    function closeMenu() {
+      const hamburger = document.getElementById("hamburger");
+      const menu = document.getElementById("menu");
+      hamburger.classList.remove("active");
+      menu.classList.remove("active");
+      hamburger.setAttribute("aria-expanded", "false");
+      menu.setAttribute("aria-hidden", "true");
+    }
+
+    /* MENÜ KATEGORİLERİ */
+    function updateMenu() {
+      const menu = document.getElementById("menu");
+      menu.innerHTML = "";
+      const allLink = document.createElement("a");
+      allLink.textContent = "Tümü";
+      allLink.classList.add(filter === "Tümü" ? "active" : "");
+      allLink.onclick = () => { filterCategory("Tümü"); closeMenu(); };
+      menu.appendChild(allLink);
+
+      categories.forEach(cat => {
+        const link = document.createElement("a");
+        link.textContent = cat;
+        if (filter === cat) link.classList.add("active");
+        link.onclick = () => { filterCategory(cat); closeMenu(); };
+        menu.appendChild(link);
+      });
+    }
+
+    /* SEPET */
+    const cartButton = document.getElementById("cartButton");
+    const cartPanel = document.getElementById("cartPanel");
+    const cartCountSpan = document.getElementById("cartCount");
+    const cartItemsUl = document.getElementById("cartItems");
+    const cartTotalDiv = document.getElementById("cartTotal");
+
+    function toggleCart() {
+      if (cartPanel.style.display === "block") {
+        closeCart();
+      } else {
+        openCart();
+        closeMenu();
+      }
+    }
+    function openCart() {
+      cartPanel.style.display = "block";
+    }
+    function closeCart() {
+      cartPanel.style.display = "none";
+    }
+    function updateCartDisplay() {
+      const keys = Object.keys(cart);
+      cartCountSpan.textContent = keys.length;
+      cartItemsUl.innerHTML = "";
+      let totalPrice = 0;
+
+      keys.forEach(key => {
+        const p = productList.find(pr => pr.name === key);
+        if (!p) return;
+
+        let qty = cart[key];
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <span>${p.name} (${p.cat})</span>
+          <div class="qty-controls">
+            <button onclick="changeQty('${key}', -1)">-</button>
+            <input type="text" value="${qty}" readonly />
+            <button onclick="changeQty('${key}', 1)">+</button>
+          </div>
+        `;
+        cartItemsUl.appendChild(li);
+      });
+
+      cartTotalDiv.textContent = `Toplam Ürün Sayısı: ${keys.reduce((a,b) => a + cart[b], 0)}`;
+      saveData();
+    }
+    function changeQty(name, delta) {
+      if (!cart[name]) return;
+      cart[name] += delta;
+      if (cart[name] < 1) delete cart[name];
+      updateCartDisplay();
+    }
+    function addToCart(name) {
+      if (!cart[name]) {
+        cart[name] = 1;
+      } else {
+        cart[name]++;
+      }
+      updateCartDisplay();
+      alert(`'${name}' sepete eklendi!`);
+    }
+    function clearCart() {
+      if (confirm("Sepeti temizlemek istediğinize emin misiniz?")) {
+        cart = {};
+        updateCartDisplay();
+      }
+    }
+
+    /* KATEGORİLER */
+    function updateCategorySelect() {
+      const select = document.getElementById("prodCat");
+      const delSelect = document.getElementById("delCategory");
+      select.innerHTML = "";
+      delSelect.innerHTML = "";
+      categories.forEach(cat => {
+        const opt1 = document.createElement("option");
+        opt1.value = cat;
+        opt1.textContent = cat;
+        select.appendChild(opt1);
+
+        const opt2 = document.createElement("option");
+        opt2.value = cat;
+        opt2.textContent = cat;
+        delSelect.appendChild(opt2);
+      });
+
+      updateSidebar();
+      updateMenu();
+    }
+
+    /* SIDEBAR MENÜ */
+    const sidebar = document.getElementById("sidebar");
+    function updateSidebar() {
+      sidebar.innerHTML = "";
+      const allLink = document.createElement("a");
+      allLink.textContent = "Tümü";
+      allLink.classList.add(filter === "Tümü" ? "active" : "");
+      allLink.onclick = () => { filterCategory("Tümü"); closeMenu(); };
+      sidebar.appendChild(allLink);
+
+      categories.forEach(cat => {
+        const link = document.createElement("a");
+        link.textContent = cat;
+        if (filter === cat) link.classList.add("active");
+        link.onclick = () => { filterCategory(cat); closeMenu(); };
+        sidebar.appendChild(link);
+      });
+    }
+
+    /* ADMIN PANEL */
+    function checkPass() {
+      if (document.getElementById("adminPass").value === "967") {
+        isAdmin = true;
+        document.getElementById("adminPanel").style.display = "block";
+        document.getElementById("loginBox").style.display = "none";
+        updateCategorySelect();
+        updateDeleteProductSelect();
+        renderProducts();
+        alert("Admin girişi başarılı!");
+      } else {
+        alert("Hatalı şifre!");
+      }
+    }
+
+    function logoutAdmin() {
+      isAdmin = false;
+      document.getElementById("adminPanel").style.display = "none";
+      document.getElementById("loginBox").style.display = "block";
+      document.getElementById("adminPass").value = "";
+      renderProducts();
+    }
+
+    function addCategory() {
+      const catName = document.getElementById("newCategory").value.trim();
+      if (catName && !categories.includes(catName)) {
+        categories.push(catName);
+        updateCategorySelect();
+        saveData();
+        document.getElementById("newCategory").value = "";
+      }
+    }
+
+    function deleteCategory() {
+      const toDelete = document.getElementById("delCategory").value;
+      categories = categories.filter(c => c !== toDelete);
+      productList = productList.filter(p => p.cat !== toDelete);
+      updateCategorySelect();
+      updateDeleteProductSelect();
+      renderProducts();
+      saveData();
+    }
+
+    function addProduct() {
+      const name = document.getElementById("prodName").value.trim();
+      const desc = document.getElementById("prodDesc").value.trim();
+      const img = document.getElementById("prodImg").value.trim();
+      const cat = document.getElementById("prodCat").value;
+
+      if (!name || !desc || !img || !cat) {
+        alert("Lütfen tüm alanları doldurun.");
+        return;
+      }
+
+      productList.push({ name, desc, img, cat });
+      updateDeleteProductSelect();
+      renderProducts();
+      saveData();
+      document.getElementById("prodName").value = "";
+      document.getElementById("prodDesc").value = "";
+      document.getElementById("prodImg").value = "";
+    }
+
+    function deleteProduct() {
+      const index = parseInt(document.getElementById("delProduct").value);
+      if (index >= 0) {
+        productList.splice(index, 1);
+        updateDeleteProductSelect();
+        renderProducts();
+        saveData();
+      }
+    }
+
+    function updateDeleteProductSelect() {
+      const delSelect = document.getElementById("delProduct");
+      delSelect.innerHTML = "";
+      productList.forEach((p, i) => {
+        const opt = document.createElement("option");
+        opt.value = i;
+        opt.textContent = `${p.name} (${p.cat})`;
+        delSelect.appendChild(opt);
+      });
+    }
+
+    /* ÜRÜNLERİ RENDERLA */
+    function filterCategory(category) {
+      filter = category;
+      updateSidebar();
+      updateMenu();
+      renderProducts();
+    }
+
+    function renderProducts() {
+      const container = document.getElementById("productList");
+      container.innerHTML = "";
+      productList.forEach(p => {
+        if (filter !== "Tümü" && p.cat !== filter) return;
+
+        const card = document.createElement("div");
+        card.className = "product";
+        card.innerHTML = `
+          <img src="${p.img}" alt="${p.name}" loading="lazy" />
+          <h3>${p.name}</h3>
+          <p>${p.desc}</p>
+          <p><i>${p.cat}</i></p>
+          <button class="add-to-cart" onclick="addToCart('${p.name}')">Sepete Ekle</button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    /* SORUMLULUK REDDİ */
+    const disclaimerBtn = document.getElementById("disclaimerBtn");
+    const disclaimerBox = document.getElementById("disclaimerBox");
+    let disclaimerVisible = false;
+    function toggleDisclaimer() {
+      disclaimerVisible = !disclaimerVisible;
+      disclaimerBox.style.display = disclaimerVisible ? "block" : "none";
+    }
+
+  </script>
+
+</body>
+</html>
