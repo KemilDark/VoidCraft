@@ -53,6 +53,7 @@
       background: rgba(0, 0, 0, 0.5);
       z-index: 999;
       display: none;
+      pointer-events: auto;
     }
     .menu-overlay.active {
       display: block;
@@ -63,12 +64,13 @@
       text-align: center;
       padding: 20px 0 10px;
       position: relative;
-      z-index: 1010; /* Increased to ensure logo is above menu and overlay */
+      z-index: 1030; /* Increased to ensure logo is above all elements */
     }
     header img {
       height: 100px;
       display: block;
       margin: 0 auto;
+      z-index: 1030;
     }
 
     h1 {
@@ -76,7 +78,7 @@
       margin: 10px 0 20px;
       text-align: center;
       position: relative;
-      z-index: 1010;
+      z-index: 1030;
     }
 
     .insta-link {
@@ -84,7 +86,7 @@
       margin-bottom: 30px;
       font-size: 14px;
       position: relative;
-      z-index: 1010;
+      z-index: 1030;
     }
     .insta-link a {
       color: #00bfff;
@@ -104,10 +106,11 @@
       width: 36px;
       height: 28px;
       cursor: pointer;
-      z-index: 1020;
+      z-index: 1040; /* Above all other elements */
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      pointer-events: auto;
     }
     .hamburger div {
       width: 100%;
@@ -173,7 +176,7 @@
       border-radius: 5px;
       font-weight: bold;
       cursor: pointer;
-      z-index: 1010;
+      z-index: 1030;
       box-shadow: 0 0 10px #00bfffaa;
       user-select: none;
       transition: transform 0.2s ease, background 0.3s ease;
@@ -307,7 +310,7 @@
       color: #ddd;
       margin-bottom: 10px;
     }
-    .price-stock {
+彼此: .price-stock {
       font-weight: 700;
       font-size: 1em;
       margin-bottom: 10px;
@@ -397,7 +400,7 @@
       color: white;
       text-align: center;
       position: relative;
-      z-index: 1010;
+      z-index: 1030;
     }
     .login input[type="password"] {
       width: 100%;
@@ -483,7 +486,7 @@
       position: fixed;
       bottom: 80px;
       left: 50%;
-      transform: translateXstasy: translateX(-50%);
+      transform: translateX(-50%);
       max-width: 90%;
       background: rgba(255, 92, 51, 0.95);
       color: white;
@@ -682,7 +685,9 @@
       hamburger.setAttribute("aria-expanded", "false");
       menu.setAttribute("aria-hidden", "true");
 
-      hamburger.addEventListener("click", () => {
+      // Click event for hamburger
+      hamburger.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevent event bubbling
         const isActive = !hamburger.classList.contains("active");
         hamburger.classList.toggle("active", isActive);
         menu.classList.toggle("active", isActive);
@@ -694,6 +699,7 @@
         }
       });
 
+      // Keyboard event for accessibility
       hamburger.addEventListener("keypress", (e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
@@ -724,7 +730,7 @@
       menu.innerHTML = "";
       const allLink = document.createElement("a");
       allLink.textContent = "Tümü";
-      allLink.classList.add(filter === "Tümü" ? "active"16px; : "");
+      allLink.classList.add(filter === "Tümü" ? "active" : "");
       allLink.onclick = () => { filterCategory("Tümü"); };
       menu.appendChild(allLink);
 
