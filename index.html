@@ -43,12 +43,27 @@
       }
     }
 
+    /* MENU OVERLAY */
+    .menu-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      display: none;
+    }
+    .menu-overlay.active {
+      display: block;
+    }
+
     /* HEADER */
     header {
       text-align: center;
       padding: 20px 0 10px;
       position: relative;
-      z-index: 10;
+      z-index: 1010; /* Increased to ensure logo is above menu and overlay */
     }
     header img {
       height: 100px;
@@ -60,6 +75,8 @@
       font-size: 2.2em;
       margin: 10px 0 20px;
       text-align: center;
+      position: relative;
+      z-index: 1010;
     }
 
     .insta-link {
@@ -67,7 +84,7 @@
       margin-bottom: 30px;
       font-size: 14px;
       position: relative;
-      z-index: 10;
+      z-index: 1010;
     }
     .insta-link a {
       color: #00bfff;
@@ -87,7 +104,7 @@
       width: 36px;
       height: 28px;
       cursor: pointer;
-      z-index: 1010;
+      z-index: 1020;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -380,7 +397,7 @@
       color: white;
       text-align: center;
       position: relative;
-      z-index: 10;
+      z-index: 1010;
     }
     .login input[type="password"] {
       width: 100%;
@@ -466,7 +483,7 @@
       position: fixed;
       bottom: 80px;
       left: 50%;
-      transform: translateX(-50%);
+      transform: translateXstasy: translateX(-50%);
       max-width: 90%;
       background: rgba(255, 92, 51, 0.95);
       color: white;
@@ -517,6 +534,9 @@
   </style>
 </head>
 <body>
+
+  <!-- MENU OVERLAY -->
+  <div class="menu-overlay" id="menuOverlay"></div>
 
   <!-- YAĞMUR EFEKTİ -->
   <div class="rain" id="rain"></div>
@@ -653,10 +673,12 @@
     function initializeHamburgerMenu() {
       const hamburger = document.getElementById("hamburger");
       const menu = document.getElementById("menu");
+      const overlay = document.getElementById("menuOverlay");
 
       // Ensure initial state
       hamburger.classList.remove("active");
       menu.classList.remove("active");
+      overlay.classList.remove("active");
       hamburger.setAttribute("aria-expanded", "false");
       menu.setAttribute("aria-hidden", "true");
 
@@ -664,6 +686,7 @@
         const isActive = !hamburger.classList.contains("active");
         hamburger.classList.toggle("active", isActive);
         menu.classList.toggle("active", isActive);
+        overlay.classList.toggle("active", isActive);
         hamburger.setAttribute("aria-expanded", isActive);
         menu.setAttribute("aria-hidden", !isActive);
         if (isActive) {
@@ -677,13 +700,20 @@
           hamburger.click();
         }
       });
+
+      // Close menu when clicking overlay
+      overlay.addEventListener("click", () => {
+        closeMenu();
+      });
     }
 
     function closeMenu() {
       const hamburger = document.getElementById("hamburger");
       const menu = document.getElementById("menu");
+      const overlay = document.getElementById("menuOverlay");
       hamburger.classList.remove("active");
       menu.classList.remove("active");
+      overlay.classList.remove("active");
       hamburger.setAttribute("aria-expanded", "false");
       menu.setAttribute("aria-hidden", "true");
     }
@@ -694,15 +724,15 @@
       menu.innerHTML = "";
       const allLink = document.createElement("a");
       allLink.textContent = "Tümü";
-      allLink.classList.add(filter === "Tümü" ? "active" : "");
-      allLink.onclick = () => { filterCategory("Tümü"); closeMenu(); };
+      allLink.classList.add(filter === "Tümü" ? "active"16px; : "");
+      allLink.onclick = () => { filterCategory("Tümü"); };
       menu.appendChild(allLink);
 
       categories.forEach(cat => {
         const link = document.createElement("a");
         link.textContent = cat;
         if (filter === cat) link.classList.add("active");
-        link.onclick = () => { filterCategory(cat); closeMenu(); };
+        link.onclick = () => { filterCategory(cat); };
         menu.appendChild(link);
       });
     }
@@ -805,14 +835,14 @@
       const allLink = document.createElement("a");
       allLink.textContent = "Tümü";
       allLink.classList.add(filter === "Tümü" ? "active" : "");
-      allLink.onclick = () => { filterCategory("Tümü"); closeMenu(); };
+      allLink.onclick = () => { filterCategory("Tümü"); };
       sidebar.appendChild(allLink);
 
       categories.forEach(cat => {
         const link = document.createElement("a");
         link.textContent = cat;
         if (filter === cat) link.classList.add("active");
-        link.onclick = () => { filterCategory(cat); closeMenu(); };
+        link.onclick = () => { filterCategory(cat); };
         sidebar.appendChild(link);
       });
     }
