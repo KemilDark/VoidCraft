@@ -64,13 +64,13 @@
       text-align: center;
       padding: 20px 0 10px;
       position: relative;
-      z-index: 1030; /* Increased to ensure logo is above all elements */
+      z-index: 1050; /* Increased to ensure logo is above all elements */
     }
     header img {
       height: 100px;
       display: block;
       margin: 0 auto;
-      z-index: 1030;
+      z-index: 1050;
     }
 
     h1 {
@@ -78,7 +78,7 @@
       margin: 10px 0 20px;
       text-align: center;
       position: relative;
-      z-index: 1030;
+      z-index: 1050;
     }
 
     .insta-link {
@@ -86,7 +86,7 @@
       margin-bottom: 30px;
       font-size: 14px;
       position: relative;
-      z-index: 1030;
+      z-index: 1050;
     }
     .insta-link a {
       color: #00bfff;
@@ -102,11 +102,11 @@
     .hamburger {
       position: fixed;
       top: 20px;
-      right: 60px;
+      right: 70px; /* Moved left to avoid overlapping cart button */
       width: 36px;
       height: 28px;
       cursor: pointer;
-      z-index: 1040; /* Above all other elements */
+      z-index: 1060; /* Above all other elements */
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -168,7 +168,7 @@
     #cartButton {
       position: fixed;
       top: 20px;
-      right: 20px;
+      right: 20px; /* Kept at far right */
       background: #00bfff;
       border: none;
       color: #000;
@@ -176,7 +176,7 @@
       border-radius: 5px;
       font-weight: bold;
       cursor: pointer;
-      z-index: 1030;
+      z-index: 1050;
       box-shadow: 0 0 10px #00bfffaa;
       user-select: none;
       transition: transform 0.2s ease, background 0.3s ease;
@@ -310,7 +310,7 @@
       color: #ddd;
       margin-bottom: 10px;
     }
-彼此: .price-stock {
+    .price-stock {
       font-weight: 700;
       font-size: 1em;
       margin-bottom: 10px;
@@ -400,7 +400,7 @@
       color: white;
       text-align: center;
       position: relative;
-      z-index: 1030;
+      z-index: 1050;
     }
     .login input[type="password"] {
       width: 100%;
@@ -504,11 +504,14 @@
     /* Responsive */
     @media (max-width: 900px) {
       .hamburger {
-        right: 50px;
+        right: 60px; /* Adjusted for mobile */
       }
       .menu {
         width: 100%;
         right: -100%;
+      }
+      #cartButton {
+        right: 10px; /* Adjusted for mobile */
       }
       #sidebar {
         position: static;
