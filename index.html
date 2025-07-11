@@ -2,7 +2,10 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="VoidCraft Arduino ve Siber Güvenlik Marketi - Kaliteli ürünler ve hızlı teslimat" />
+  <meta name="keywords" content="Arduino, Siber Güvenlik, ESP Deauther, VoidCraft" />
+  <meta name="author" content="VoidCraft" />
   <title>VoidCraft - Arduino & Siber Güvenlik</title>
   <style>
     * {
@@ -11,11 +14,12 @@
       box-sizing: border-box;
     }
     body {
-      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: white;
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: #ffffff;
+      background: linear-gradient(135deg, #0a0a23 0%, #1a1a3a 100%);
       overflow-x: hidden;
-      background: #0e0e15;
       position: relative;
+      line-height: 1.6;
     }
 
     /* YAĞMUR EFEKTİ */
@@ -27,13 +31,13 @@
       height: 100%;
       pointer-events: none;
       z-index: 0;
-      overflow: hidden;
+      opacity: 0.4;
     }
     .drop {
       position: absolute;
       width: 2px;
-      height: 20px;
-      background: rgba(255, 255, 255, 0.2);
+      height: 25px;
+      background: rgba(255, 255, 255, 0.3);
       animation: fall linear infinite;
       border-radius: 50%;
     }
@@ -43,512 +47,335 @@
       }
     }
 
-    /* MENU OVERLAY */
-    .menu-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 999;
-      display: none;
-      pointer-events: auto;
-    }
-    .menu-overlay.active {
-      display: block;
-    }
-
     /* HEADER */
     header {
       text-align: center;
-      padding: 20px 0 10px;
+      padding: 30px 0 20px;
       position: relative;
-      z-index: 1050; /* Increased to ensure logo is above all elements */
+      z-index: 1200;
     }
-    header img {
-      height: 100px;
-      display: block;
+    header a img {
+      height: 120px;
+      max-width: 180px;
       margin: 0 auto;
-      z-index: 1050;
+      transition: transform 0.3s ease;
+    }
+    header a img:hover {
+      transform: scale(1.05);
     }
 
     h1 {
-      font-size: 2.2em;
-      margin: 10px 0 20px;
+      font-size: 2.2rem;
+      margin: 15px 0 25px;
       text-align: center;
-      position: relative;
-      z-index: 1050;
+      z-index: 1200;
+      font-weight: 600;
+      background: linear-gradient(45deg, #00bfff, #ff69b4);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
 
     .insta-link {
       text-align: center;
-      margin-bottom: 30px;
-      font-size: 14px;
-      position: relative;
-      z-index: 1050;
+      margin-bottom: 40px;
+      z-index: 1200;
     }
     .insta-link a {
-      color: #00bfff;
+      color: #ffffff;
       text-decoration: none;
-      font-weight: bold;
-      transition: color 0.3s ease;
+      font-weight: 500;
+      padding: 10px 20px;
+      border-radius: 25px;
+      background: linear-gradient(45deg, #ff69b4, #ff1493);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: inline-block;
     }
     .insta-link a:hover {
-      color: #00a3cc;
-    }
-
-    /* HAMBURGER MENU */
-    .hamburger {
-      position: fixed;
-      top: 20px;
-      right: 70px; /* Moved left to avoid overlapping cart button */
-      width: 36px;
-      height: 28px;
-      cursor: pointer;
-      z-index: 1060; /* Above all other elements */
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      pointer-events: auto;
-    }
-    .hamburger div {
-      width: 100%;
-      height: 4px;
-      background: #ffffff;
-      border-radius: 4px;
-      transition: all 0.3s ease;
-    }
-    .hamburger.active div:nth-child(1) {
-      transform: rotate(45deg) translate(8px, 8px);
-    }
-    .hamburger.active div:nth-child(2) {
-      opacity: 0;
-    }
-    .hamburger.active div:nth-child(3) {
-      transform: rotate(-45deg) translate(8px, -8px);
-    }
-
-    /* MENÜ */
-    .menu {
-      position: fixed;
-      top: 0;
-      right: -300px;
-      width: 300px;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.95);
-      backdrop-filter: blur(8px);
-      padding: 80px 20px 20px;
-      display: flex;
-      flex-direction: column;
-      transition: right 0.3s ease;
-      z-index: 1000;
-      box-shadow: -5px 0 15px rgba(0, 0, 0, 0.5);
-    }
-    .menu.active {
-      right: 0;
-    }
-    .menu a {
-      color: #00bfff;
-      padding: 15px 20px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 1.1em;
-      border-radius: 8px;
-      margin: 5px 0;
-      transition: all 0.3s ease;
-    }
-    .menu a:hover {
-      background: #005f8c;
-      transform: translateX(5px);
-      color: #ffffff;
-    }
-
-    /* SEPET BUTONU */
-    #cartButton {
-      position: fixed;
-      top: 20px;
-      right: 20px; /* Kept at far right */
-      background: #00bfff;
-      border: none;
-      color: #000;
-      padding: 10px 16px;
-      border-radius: 5px;
-      font-weight: bold;
-      cursor: pointer;
-      z-index: 1050;
-      box-shadow: 0 0 10px #00bfffaa;
-      user-select: none;
-      transition: transform 0.2s ease, background 0.3s ease;
-    }
-    #cartButton:hover {
-      transform: scale(1.05);
-      background: #00a3cc;
-    }
-
-    /* SEPET PANELİ */
-    #cartPanel {
-      position: fixed;
-      top: 60px;
-      right: 20px;
-      width: 320px;
-      max-height: 70vh;
-      background: rgba(0,0,0,0.85);
-      border-radius: 10px;
-      box-shadow: 0 0 15px #00bfffaa;
-      padding: 15px;
-      overflow-y: auto;
-      z-index: 1050;
-      display: none;
-      color: white;
-    }
-    #cartPanel h3 {
-      margin-bottom: 15px;
-      border-bottom: 1px solid #00bfff;
-      padding-bottom: 5px;
-    }
-    #cartItems {
-      list-style: none;
-      max-height: 45vh;
-      overflow-y: auto;
-      margin-bottom: 10px;
-    }
-    #cartItems li {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 0;
-      border-bottom: 1px solid #222;
-      font-size: 0.95em;
-    }
-    #cartItems li .qty-controls {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    #cartItems li .qty-controls button {
-      padding: 4px 8px;
-      background: #0080ff;
-      border: none;
-      color: white;
-      border-radius: 4px;
-      cursor: pointer;
-      user-select: none;
-    }
-    #cartItems li .qty-controls button:hover {
-      background: #00bfff;
-    }
-    #cartItems li .qty-controls input {
-      width: 40px;
-      text-align: center;
-      border-radius: 5px;
-      border: none;
-      font-size: 1em;
-    }
-    #cartTotal {
-      font-weight: bold;
-      font-size: 1.1em;
-      text-align: right;
-      margin-top: 5px;
-    }
-    #clearCartBtn {
-      margin-top: 10px;
-      background: #900;
-      border: none;
-      color: white;
-      padding: 8px 15px;
-      border-radius: 5px;
-      cursor: pointer;
-      user-select: none;
-      width: 100%;
-      font-weight: bold;
-    }
-    #clearCartBtn:hover {
-      background: #c00;
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(255, 105, 180, 0.4);
     }
 
     /* ÜRÜNLER */
     .products {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      padding: 20px 30px 50px;
-      position: relative;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      padding: 30px;
       z-index: 5;
-      max-width: 1200px;
-      margin: 0 auto 80px;
+      max-width: 1280px;
+      margin: 0 auto 100px;
     }
     .product {
-      background: rgba(0, 0, 0, 0.65);
-      backdrop-filter: blur(8px);
-      border-radius: 12px;
-      padding: 15px;
-      box-shadow: 0 0 10px #00bfff33;
+      background: rgba(30, 30, 50, 0.9);
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 5px 20px rgba(0, 191, 255, 0.2);
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      transition: transform 0.2s ease, box-shadow 0.3s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      backdrop-filter: blur(12px);
     }
     .product:hover {
-      transform: scale(1.03);
-      box-shadow: 0 0 20px #00bfff77;
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0, 191, 255, 0.4);
     }
     .product img {
       width: 100%;
-      border-radius: 10px;
+      border-radius: 12px;
       object-fit: cover;
-      height: 160px;
-      margin-bottom: 12px;
+      height: 180px;
+      margin-bottom: 15px;
+      transition: transform 0.3s ease;
+    }
+    .product img:hover {
+      transform: scale(1.02);
     }
     .product h3 {
-      font-size: 1.3em;
-      margin-bottom: 8px;
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+      font-weight: 600;
     }
     .product p {
       flex-grow: 1;
-      font-size: 0.9em;
-      color: #ddd;
-      margin-bottom: 10px;
+      font-size: 0.95rem;
+      color: #e0e0e0;
+      margin-bottom: 12px;
     }
     .price-stock {
-      font-weight: 700;
-      font-size: 1em;
-      margin-bottom: 10px;
-    }
-    .add-to-cart {
-      background: #00bfff;
-      border: none;
-      color: black;
-      padding: 10px 0;
-      border-radius: 7px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s ease, transform 0.2s ease;
-      user-select: none;
-    }
-    .add-to-cart:hover {
-      background: #0099dd;
-      transform: scale(1.02);
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+      color: #00bfff;
     }
 
     /* ADMIN PANEL */
     .admin-panel {
-      max-width: 600px;
-      margin: 0 auto 50px;
-      padding: 25px 30px;
-      background: rgba(0,0,0,0.75);
-      border-radius: 15px;
-      border: 2px solid #00bfff;
-      box-shadow: 0 0 15px #00bfff55;
+      max-width: 700px;
+      margin: 0 auto 60px;
+      padding: 30px;
+      background: rgba(30, 30, 50, 0.9);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 191, 255, 0.2);
       color: white;
       display: none;
       z-index: 10;
-      position: relative;
+      backdrop-filter: blur(12px);
     }
-    .admin-panel h2 {
-      margin-bottom: 15px;
+    .admin-panel h2, .admin-panel h3 {
+      margin-bottom: 20px;
       text-align: center;
+      font-weight: 600;
     }
     .admin-panel input[type="text"],
     .admin-panel input[type="number"],
     .admin-panel select {
       width: 100%;
-      padding: 10px 12px;
-      margin: 8px 0 15px;
+      padding: 12px 15px;
+      margin: 10px 0 20px;
       border: none;
-      border-radius: 8px;
-      font-size: 1em;
+      border-radius: 12px;
+      font-size: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+    .admin-panel input::placeholder {
+      color: #aaa;
     }
     .admin-panel label {
-      font-weight: 600;
+      font-weight: 500;
       display: block;
       margin-top: 15px;
     }
     .admin-panel button {
-      background: #00bfff;
+      background: linear-gradient(45deg, #00bfff, #00a3cc);
       border: none;
-      padding: 12px 20px;
-      font-size: 1em;
-      font-weight: bold;
-      border-radius: 10px;
+      padding: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 15px;
       cursor: pointer;
-      transition: background 0.3s ease;
-      user-select: none;
       width: 100%;
-      margin-top: 10px;
+      margin-top: 15px;
+      transition: transform 0.3s ease;
     }
     .admin-panel button:hover {
-      background: #0099dd;
+      transform: translateY(-2px);
     }
     .admin-panel #logoutBtn {
-      background: #900;
-      margin-top: 30px;
+      background: linear-gradient(45deg, #c00, #900);
+      margin-top: 40px;
     }
     .admin-panel #logoutBtn:hover {
-      background: #c00;
+      transform: translateY(-2px);
     }
 
     /* LOGIN */
     .login {
-      max-width: 300px;
-      margin: 0 auto 50px;
-      padding: 20px 30px;
-      background: rgba(0,0,0,0.75);
-      border-radius: 15px;
-      border: 2px solid #00bfff;
-      box-shadow: 0 0 15px #00bfff55;
+      max-width: 350px;
+      margin: 0 auto 60px;
+      padding: 30px;
+      background: rgba(30, 30, 50, 0.9);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 191, 255, 0.2);
       color: white;
       text-align: center;
-      position: relative;
       z-index: 1050;
+      backdrop-filter: blur(12px);
     }
     .login input[type="password"] {
       width: 100%;
       padding: 12px 15px;
-      margin: 15px 0 10px;
-      border-radius: 8px;
+      margin: 15px 0 20px;
+      border-radius: 12px;
       border: none;
-      font-size: 1em;
+      font-size: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+    .login input::placeholder {
+      color: #aaa;
     }
     .login button {
-      background: #00bfff;
+      background: linear-gradient(45deg, #00bfff, #00a3cc);
       border: none;
-      padding: 12px 20px;
-      font-weight: bold;
-      font-size: 1em;
-      border-radius: 10px;
+      padding: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      border-radius: 15px;
       cursor: pointer;
-      user-select: none;
       width: 100%;
+      transition: transform 0.3s ease;
     }
     .login button:hover {
-      background: #0099dd;
+      transform: translateY(-2px);
     }
 
     /* CATEGORY SIDEBAR */
     #sidebar {
       position: fixed;
-      top: 140px;
+      top: 160px;
       left: 20px;
-      background: rgba(0,0,0,0.75);
-      border-radius: 10px;
-      width: 180px;
-      padding: 10px;
+      background: rgba(30, 30, 50, 0.9);
+      border-radius: 15px;
+      width: 200px;
+      padding: 15px;
       z-index: 9;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
       max-height: 70vh;
       overflow-y: auto;
+      box-shadow: 0 5px 20px rgba(0, 191, 255, 0.2);
+      backdrop-filter: blur(12px);
     }
     #sidebar a {
       color: #00bfff;
       text-decoration: none;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-weight: 600;
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-weight: 500;
       cursor: pointer;
-      transition: background 0.2s ease, transform 0.2s ease;
-      user-select: none;
+      transition: background 0.3s ease, transform 0.3s ease;
     }
     #sidebar a:hover,
     #sidebar a.active {
-      background: #005f8c;
+      background: rgba(0, 191, 255, 0.2);
       color: white;
-      transform: scale(1.02);
+      transform: translateX(5px);
     }
 
     /* SORUMLULUK REDDİ BUTONU */
     #disclaimerBtn {
       position: fixed;
-      bottom: 30px;
+      bottom: 40px;
       left: 50%;
       transform: translateX(-50%);
-      background: #ff5c33;
+      background: linear-gradient(45deg, #ff5c33, #ff3b00);
       border: none;
-      padding: 12px 25px;
+      padding: 12px 30px;
       border-radius: 25px;
-      font-weight: bold;
-      font-size: 1em;
+      font-weight: 600;
+      font-size: 1rem;
       cursor: pointer;
       color: white;
-      box-shadow: 0 0 15px #ff5c33aa;
-      user-select: none;
+      box-shadow: 0 5px 15px rgba(255, 92, 51, 0.4);
       z-index: 1100;
-      transition: background 0.3s ease, transform 0.2s ease;
+      transition: transform 0.3s ease;
     }
     #disclaimerBtn:hover {
-      background: #ff3b00;
-      transform: scale(1.05);
+      transform: translateY(-3px);
     }
 
     #disclaimerBox {
       position: fixed;
-      bottom: 80px;
+      bottom: 100px;
       left: 50%;
       transform: translateX(-50%);
       max-width: 90%;
       background: rgba(255, 92, 51, 0.95);
       color: white;
-      padding: 15px 25px;
+      padding: 20px 30px;
       border-radius: 15px;
-      font-weight: 600;
-      font-size: 0.95em;
+      font-weight: 500;
+      font-size: 0.95rem;
       text-align: center;
-      box-shadow: 0 0 20px #ff5c3377;
+      box-shadow: 0 10px 20px rgba(255, 92, 51, 0.4);
       display: none;
       z-index: 1101;
-      user-select: none;
+      backdrop-filter: blur(10px);
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 30px;
+      z-index: 5;
+      color: #aaa;
+      font-size: 0.9rem;
     }
 
     /* Responsive */
     @media (max-width: 900px) {
-      .hamburger {
-        right: 60px; /* Adjusted for mobile */
-      }
-      .menu {
-        width: 100%;
-        right: -100%;
-      }
-      #cartButton {
-        right: 10px; /* Adjusted for mobile */
-      }
       #sidebar {
         position: static;
         width: auto;
-        height: auto;
         max-height: none;
         flex-direction: row;
         overflow-x: auto;
-        margin: 0 0 20px;
-        padding: 5px 10px;
+        margin: 0 0 30px;
+        padding: 10px;
+        flex-wrap: nowrap;
       }
       #sidebar a {
-        flex: 1 0 auto;
+        flex: 0 0 auto;
         text-align: center;
-        border-radius: 15px;
+        border-radius: 12px;
+        padding: 8px 15px;
       }
       .products {
-        padding: 10px 15px 60px;
+        padding: 20px;
       }
-      #cartPanel {
-        width: 90vw;
-        right: 5vw;
-        max-height: 50vh;
+      h1 {
+        font-size: 1.8rem;
+      }
+      .product {
+        padding: 15px;
+      }
+      .product img {
+        height: 160px;
       }
     }
   </style>
 </head>
 <body>
-
-  <!-- MENU OVERLAY -->
-  <div class="menu-overlay" id="menuOverlay"></div>
-
   <!-- YAĞMUR EFEKTİ -->
   <div class="rain" id="rain"></div>
 
   <header>
-    <img src="https://i.postimg.cc/XByjjL9t/logo.png" alt="VoidCraft Logo" />
+    <a href="#">
+      <img src="https://i.ibb.co/JwGPX7TR/VO-D.png" alt="VO-D" border="0"/>
+    </a>
   </header>
 
   <h1>VoidCraft Arduino & Siber Güvenlik Marketi</h1>
@@ -559,31 +386,6 @@
     </a>
   </div>
 
-  <!-- Hamburger Menü Butonu -->
-  <div class="hamburger" id="hamburger" aria-label="Menü aç/kapa" role="button" tabindex="0" aria-expanded="false">
-    <div></div>
-    <div></div>
-    <div></div>
-  </div>
-
-  <!-- Menü -->
-  <nav class="menu" id="menu" aria-hidden="true">
-    <!-- Kategoriler JS ile doldurulacak -->
-  </nav>
-
-  <!-- Sepet Butonu -->
-  <button id="cartButton" onclick="toggleCart()" aria-label="Sepeti aç/kapa">
-    Sepet (<span id="cartCount">0</span>)
-  </button>
-
-  <!-- Sepet Paneli -->
-  <div id="cartPanel" role="region" aria-label="Alışveriş Sepeti">
-    <h3>Sepetiniz</h3>
-    <ul id="cartItems"></ul>
-    <div id="cartTotal">Toplam: ₺0.00</div>
-    <button id="clearCartBtn" onclick="clearCart()">Sepeti Temizle</button>
-  </div>
-
   <!-- Kategori Sidebar -->
   <div id="sidebar"></div>
 
@@ -591,7 +393,7 @@
   <div class="products" id="productList"></div>
 
   <!-- Sorumluluk Reddi Butonu -->
-  <button id="disclaimerBtn" onclick="toggleDisclaimer()">Sorumluluk Reddi</button>
+  <button id="disclaimerBtn">Sorumluluk Reddi</button>
 
   <div id="disclaimerBox" role="alert" aria-live="assertive">
     <p>VoidCraft tarafından satılan ESP Deauther cihazları sadece test amaçlıdır. Cihazların kullanımıyla doğabilecek her türlü yasal sorumluluk kullanıcıya aittir. Site hiçbir şekilde bu cihazların yanlış veya yasa dışı kullanımından sorumlu tutulamaz.</p>
@@ -601,31 +403,40 @@
   <div class="login" id="loginBox">
     <h2>Admin Panel Girişi</h2>
     <input type="password" id="adminPass" placeholder="Şifre" aria-label="Admin şifresi" />
-    <button onclick="checkPass()">Giriş</button>
+    <button>Giriş</button>
   </div>
 
   <!-- Admin Panel -->
   <div class="admin-panel" id="adminPanel">
     <h2>Yeni Ürün Ekle</h2>
+    <label for="prodName">Ürün Adı</label>
     <input type="text" id="prodName" placeholder="Ürün Adı" />
+    <label for="prodDesc">Açıklama</label>
     <input type="text" id="prodDesc" placeholder="Açıklama" />
+    <label for="prodImg">Görsel URL</label>
     <input type="text" id="prodImg" placeholder="Görsel URL" />
+    <label for="prodPrice">Fiyat (TL)</label>
+    <input type="number" id="prodPrice" placeholder="Fiyat" min="0" step="0.01" />
+    <label for="prodCat">Kategori</label>
     <select id="prodCat"></select>
-    <button onclick="addProduct()">Ürünü Ekle</button>
+    <button>Ürünü Ekle</button>
 
     <h3>Yeni Kategori Ekle</h3>
+    <label for="newCategory">Kategori Adı</label>
     <input type="text" id="newCategory" placeholder="Kategori Adı" />
-    <button onclick="addCategory()">Kategori Ekle</button>
+    <button>Kategori Ekle</button>
 
     <h3>Kategori Sil</h3>
+    <label for="delCategory">Kategori</label>
     <select id="delCategory"></select>
-    <button onclick="deleteCategory()">Kategori Sil</button>
+    <button>Kategori Sil</button>
 
     <h3>Ürün Sil</h3>
+    <label for="delProduct">Ürün</label>
     <select id="delProduct"></select>
-    <button onclick="deleteProduct()">Ürünü Sil</button>
+    <button>Ürünü Sil</button>
 
-    <button id="logoutBtn" onclick="logoutAdmin()">ÇIKIŞ</button>
+    <button id="logoutBtn">ÇIKIŞ</button>
   </div>
 
   <footer>
@@ -637,181 +448,73 @@
     let categories = [];
     let filter = "Tümü";
     let isAdmin = false;
-    let cart = {};
+
+    // Event Listeners
+    function setupEventListeners() {
+      const disclaimerBtn = document.getElementById("disclaimerBtn");
+      const loginButton = document.getElementById("loginBox")?.querySelector("button");
+      const adminPanel = document.getElementById("adminPanel");
+      const logoutBtn = document.getElementById("logoutBtn");
+
+      if (disclaimerBtn) disclaimerBtn.addEventListener("click", toggleDisclaimer);
+      if (loginButton) loginButton.addEventListener("click", checkPass);
+      if (adminPanel) {
+        const buttons = adminPanel.querySelectorAll("button");
+        if (buttons[0]) buttons[0].addEventListener("click", addProduct);
+        if (buttons[1]) buttons[1].addEventListener("click", addCategory);
+        if (buttons[2]) buttons[2].addEventListener("click", deleteCategory);
+        if (buttons[3]) buttons[3].addEventListener("click", deleteProduct);
+      }
+      if (logoutBtn) logoutBtn.addEventListener("click", logoutAdmin);
+    }
 
     window.onload = () => {
-      // Veri oku veya başlat
-      productList = JSON.parse(localStorage.getItem("voidcraft_products")) || [];
-      categories = JSON.parse(localStorage.getItem("voidcraft_categories")) || ["Arduino", "Siber Güvenlik", "ESP Deauther"];
-      cart = JSON.parse(localStorage.getItem("voidcraft_cart")) || {};
+      // localStorage'dan veri alırken null kontrolü
+      try {
+        productList = JSON.parse(localStorage.getItem("voidcraft_products")) || [];
+        categories = JSON.parse(localStorage.getItem("voidcraft_categories")) || ["Arduino", "Siber Güvenlik", "ESP Deauther"];
+      } catch (e) {
+        console.error("localStorage verileri okunurken hata oluştu:", e);
+        productList = [];
+        categories = ["Arduino", "Siber Güvenlik", "ESP Deauther"];
+      }
+
+      // Geçersiz verileri filtrele
+      productList = productList.filter(p => p && p.name && p.cat && p.price && typeof p.name === "string" && typeof p.cat === "string" && p.name.trim() !== "" && p.cat.trim() !== "");
+      categories = categories.filter(c => c && typeof c === "string" && c.trim() !== "");
+
       updateCategorySelect();
       updateSidebar();
-      updateMenu();
       updateDeleteProductSelect();
       renderProducts();
-      updateCartDisplay();
       generateRain();
-      initializeHamburgerMenu();
-      document.getElementById("adminPanel").style.display = "none";
+      setupEventListeners();
+
+      const adminPanel = document.getElementById("adminPanel");
+      if (adminPanel) adminPanel.style.display = "none";
     };
 
     // Yağmur damlalarını üret
     function generateRain() {
       const rain = document.getElementById("rain");
+      if (!rain) return;
       rain.innerHTML = "";
-      for (let i = 0; i < 150; i++) {
+      for (let i = 0; i < 100; i++) {
         const drop = document.createElement("div");
         drop.classList.add("drop");
         drop.style.left = `${Math.random() * 100}%`;
-        drop.style.animationDuration = `${1.0 + Math.random() * 2.0}s`;
-        drop.style.animationDelay = `${Math.random() * 5}s`;
+        drop.style.animationDuration = `${0.8 + Math.random() * 1.5}s`;
+        drop.style.animationDelay = `${Math.random() * 4}s`;
         rain.appendChild(drop);
       }
     }
 
     function saveData() {
-      localStorage.setItem("voidcraft_products", JSON.stringify(productList));
-      localStorage.setItem("voidcraft_categories", JSON.stringify(categories));
-      localStorage.setItem("voidcraft_cart", JSON.stringify(cart));
-    }
-
-    /* HAMBURGER MENU */
-    function initializeHamburgerMenu() {
-      const hamburger = document.getElementById("hamburger");
-      const menu = document.getElementById("menu");
-      const overlay = document.getElementById("menuOverlay");
-
-      // Ensure initial state
-      hamburger.classList.remove("active");
-      menu.classList.remove("active");
-      overlay.classList.remove("active");
-      hamburger.setAttribute("aria-expanded", "false");
-      menu.setAttribute("aria-hidden", "true");
-
-      // Click event for hamburger
-      hamburger.addEventListener("click", (e) => {
-        e.stopPropagation(); // Prevent event bubbling
-        const isActive = !hamburger.classList.contains("active");
-        hamburger.classList.toggle("active", isActive);
-        menu.classList.toggle("active", isActive);
-        overlay.classList.toggle("active", isActive);
-        hamburger.setAttribute("aria-expanded", isActive);
-        menu.setAttribute("aria-hidden", !isActive);
-        if (isActive) {
-          closeCart();
-        }
-      });
-
-      // Keyboard event for accessibility
-      hamburger.addEventListener("keypress", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          hamburger.click();
-        }
-      });
-
-      // Close menu when clicking overlay
-      overlay.addEventListener("click", () => {
-        closeMenu();
-      });
-    }
-
-    function closeMenu() {
-      const hamburger = document.getElementById("hamburger");
-      const menu = document.getElementById("menu");
-      const overlay = document.getElementById("menuOverlay");
-      hamburger.classList.remove("active");
-      menu.classList.remove("active");
-      overlay.classList.remove("active");
-      hamburger.setAttribute("aria-expanded", "false");
-      menu.setAttribute("aria-hidden", "true");
-    }
-
-    /* MENÜ KATEGORİLERİ */
-    function updateMenu() {
-      const menu = document.getElementById("menu");
-      menu.innerHTML = "";
-      const allLink = document.createElement("a");
-      allLink.textContent = "Tümü";
-      allLink.classList.add(filter === "Tümü" ? "active" : "");
-      allLink.onclick = () => { filterCategory("Tümü"); };
-      menu.appendChild(allLink);
-
-      categories.forEach(cat => {
-        const link = document.createElement("a");
-        link.textContent = cat;
-        if (filter === cat) link.classList.add("active");
-        link.onclick = () => { filterCategory(cat); };
-        menu.appendChild(link);
-      });
-    }
-
-    /* SEPET */
-    const cartButton = document.getElementById("cartButton");
-    const cartPanel = document.getElementById("cartPanel");
-    const cartCountSpan = document.getElementById("cartCount");
-    const cartItemsUl = document.getElementById("cartItems");
-    const cartTotalDiv = document.getElementById("cartTotal");
-
-    function toggleCart() {
-      if (cartPanel.style.display === "block") {
-        closeCart();
-      } else {
-        openCart();
-        closeMenu();
-      }
-    }
-    function openCart() {
-      cartPanel.style.display = "block";
-    }
-    function closeCart() {
-      cartPanel.style.display = "none";
-    }
-    function updateCartDisplay() {
-      const keys = Object.keys(cart);
-      cartCountSpan.textContent = keys.length;
-      cartItemsUl.innerHTML = "";
-      let totalPrice = 0;
-
-      keys.forEach(key => {
-        const p = productList.find(pr => pr.name === key);
-        if (!p) return;
-
-        let qty = cart[key];
-        const li = document.createElement("li");
-        li.innerHTML = `
-          <span>${p.name} (${p.cat})</span>
-          <div class="qty-controls">
-            <button onclick="changeQty('${key}', -1)">-</button>
-            <input type="text" value="${qty}" readonly />
-            <button onclick="changeQty('${key}', 1)">+</button>
-          </div>
-        `;
-        cartItemsUl.appendChild(li);
-      });
-
-      cartTotalDiv.textContent = `Toplam Ürün Sayısı: ${keys.reduce((a,b) => a + cart[b], 0)}`;
-      saveData();
-    }
-    function changeQty(name, delta) {
-      if (!cart[name]) return;
-      cart[name] += delta;
-      if (cart[name] < 1) delete cart[name];
-      updateCartDisplay();
-    }
-    function addToCart(name) {
-      if (!cart[name]) {
-        cart[name] = 1;
-      } else {
-        cart[name]++;
-      }
-      updateCartDisplay();
-      alert(`'${name}' sepete eklendi!`);
-    }
-    function clearCart() {
-      if (confirm("Sepeti temizlemek istediğinize emin misiniz?")) {
-        cart = {};
-        updateCartDisplay();
+      try {
+        localStorage.setItem("voidcraft_products", JSON.stringify(productList));
+        localStorage.setItem("voidcraft_categories", JSON.stringify(categories));
+      } catch (e) {
+        console.error("localStorage'a veri kaydedilirken hata oluştu:", e);
       }
     }
 
@@ -819,49 +522,60 @@
     function updateCategorySelect() {
       const select = document.getElementById("prodCat");
       const delSelect = document.getElementById("delCategory");
+      if (!select || !delSelect) return;
+
       select.innerHTML = "";
       delSelect.innerHTML = "";
       categories.forEach(cat => {
-        const opt1 = document.createElement("option");
-        opt1.value = cat;
-        opt1.textContent = cat;
-        select.appendChild(opt1);
+        if (cat && typeof cat === "string" && cat.trim() !== "") {
+          const opt1 = document.createElement("option");
+          opt1.value = cat;
+          opt1.textContent = cat;
+          select.appendChild(opt1);
 
-        const opt2 = document.createElement("option");
-        opt2.value = cat;
-        opt2.textContent = cat;
-        delSelect.appendChild(opt2);
+          const opt2 = document.createElement("option");
+          opt2.value = cat;
+          opt2.textContent = cat;
+          delSelect.appendChild(opt2);
+        }
       });
 
       updateSidebar();
-      updateMenu();
     }
 
     /* SIDEBAR MENÜ */
-    const sidebar = document.getElementById("sidebar");
     function updateSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      if (!sidebar) return;
       sidebar.innerHTML = "";
       const allLink = document.createElement("a");
       allLink.textContent = "Tümü";
-      allLink.classList.add(filter === "Tümü" ? "active" : "");
-      allLink.onclick = () => { filterCategory("Tümü"); };
+      if (filter === "Tümü") allLink.classList.add("active");
+      allLink.addEventListener("click", () => filterCategory("Tümü"));
       sidebar.appendChild(allLink);
 
       categories.forEach(cat => {
-        const link = document.createElement("a");
-        link.textContent = cat;
-        if (filter === cat) link.classList.add("active");
-        link.onclick = () => { filterCategory(cat); };
-        sidebar.appendChild(link);
+        if (cat && typeof cat === "string" && cat.trim() !== "") {
+          const link = document.createElement("a");
+          link.textContent = cat;
+          if (filter === cat) link.classList.add("active");
+          link.addEventListener("click", () => filterCategory(cat));
+          sidebar.appendChild(link);
+        }
       });
     }
 
     /* ADMIN PANEL */
     function checkPass() {
-      if (document.getElementById("adminPass").value === "967") {
+      const adminPass = document.getElementById("adminPass");
+      const adminPanel = document.getElementById("adminPanel");
+      const loginBox = document.getElementById("loginBox");
+      if (!adminPass || !adminPanel || !loginBox) return;
+
+      if (adminPass.value === "967") {
         isAdmin = true;
-        document.getElementById("adminPanel").style.display = "block";
-        document.getElementById("loginBox").style.display = "none";
+        adminPanel.style.display = "block";
+        loginBox.style.display = "none";
         updateCategorySelect();
         updateDeleteProductSelect();
         renderProducts();
@@ -872,55 +586,77 @@
     }
 
     function logoutAdmin() {
+      const adminPanel = document.getElementById("adminPanel");
+      const loginBox = document.getElementById("loginBox");
+      const adminPass = document.getElementById("adminPass");
+      if (!adminPanel || !loginBox || !adminPass) return;
+
       isAdmin = false;
-      document.getElementById("adminPanel").style.display = "none";
-      document.getElementById("loginBox").style.display = "block";
-      document.getElementById("adminPass").value = "";
+      adminPanel.style.display = "none";
+      loginBox.style.display = "block";
+      adminPass.value = "";
       renderProducts();
     }
 
     function addCategory() {
-      const catName = document.getElementById("newCategory").value.trim();
+      const newCategory = document.getElementById("newCategory");
+      if (!newCategory) return;
+      const catName = newCategory.value.trim();
       if (catName && !categories.includes(catName)) {
         categories.push(catName);
         updateCategorySelect();
         saveData();
-        document.getElementById("newCategory").value = "";
+        newCategory.value = "";
       }
     }
 
     function deleteCategory() {
-      const toDelete = document.getElementById("delCategory").value;
-      categories = categories.filter(c => c !== toDelete);
-      productList = productList.filter(p => p.cat !== toDelete);
-      updateCategorySelect();
-      updateDeleteProductSelect();
-      renderProducts();
-      saveData();
+      const delCategory = document.getElementById("delCategory");
+      if (!delCategory) return;
+      const toDelete = delCategory.value;
+      if (toDelete && toDelete.trim() !== "") {
+        categories = categories.filter(c => c !== toDelete);
+        productList = productList.filter(p => p && p.cat !== toDelete);
+        updateCategorySelect();
+        updateDeleteProductSelect();
+        renderProducts();
+        saveData();
+      }
     }
 
     function addProduct() {
-      const name = document.getElementById("prodName").value.trim();
-      const desc = document.getElementById("prodDesc").value.trim();
-      const img = document.getElementById("prodImg").value.trim();
-      const cat = document.getElementById("prodCat").value;
+      const prodName = document.getElementById("prodName");
+      const prodDesc = document.getElementById("prodDesc");
+      const prodImg = document.getElementById("prodImg");
+      const prodPrice = document.getElementById("prodPrice");
+      const prodCat = document.getElementById("prodCat");
+      if (!prodName || !prodDesc || !prodImg || !prodPrice || !prodCat) return;
 
-      if (!name || !desc || !img || !cat) {
-        alert("Lütfen tüm alanları doldurun.");
+      const name = prodName.value.trim();
+      const desc = prodDesc.value.trim();
+      const img = prodImg.value.trim();
+      const price = parseFloat(prodPrice.value);
+      const cat = prodCat.value;
+
+      if (!name || !desc || !img || isNaN(price) || price < 0 || !cat || name.trim() === "" || desc.trim() === "" || img.trim() === "" || cat.trim() === "") {
+        alert("Lütfen tüm alanları doldurun ve geçerli bir fiyat girin.");
         return;
       }
 
-      productList.push({ name, desc, img, cat });
+      productList.push({ name, desc, img, price, cat });
       updateDeleteProductSelect();
       renderProducts();
       saveData();
-      document.getElementById("prodName").value = "";
-      document.getElementById("prodDesc").value = "";
-      document.getElementById("prodImg").value = "";
+      prodName.value = "";
+      prodDesc.value = "";
+      prodImg.value = "";
+      prodPrice.value = "";
     }
 
     function deleteProduct() {
-      const index = parseInt(document.getElementById("delProduct").value);
+      const delProduct = document.getElementById("delProduct");
+      if (!delProduct) return;
+      const index = parseInt(delProduct.value);
       if (index >= 0) {
         productList.splice(index, 1);
         updateDeleteProductSelect();
@@ -931,27 +667,35 @@
 
     function updateDeleteProductSelect() {
       const delSelect = document.getElementById("delProduct");
+      if (!delSelect) return;
       delSelect.innerHTML = "";
       productList.forEach((p, i) => {
-        const opt = document.createElement("option");
-        opt.value = i;
-        opt.textContent = `${p.name} (${p.cat})`;
-        delSelect.appendChild(opt);
+        if (p && p.name && p.cat && p.price && p.name.trim() !== "" && p.cat.trim() !== "") {
+          const opt = document.createElement("option");
+          opt.value = i;
+          opt.textContent = `${p.name} (${p.cat}) - ${p.price} TL`;
+          delSelect.appendChild(opt);
+        }
       });
     }
 
     /* ÜRÜNLERİ RENDERLA */
     function filterCategory(category) {
-      filter = category;
+      if (!category || category.trim() === "") {
+        filter = "Tümü";
+      } else {
+        filter = category;
+      }
       updateSidebar();
-      updateMenu();
       renderProducts();
     }
 
     function renderProducts() {
       const container = document.getElementById("productList");
+      if (!container) return;
       container.innerHTML = "";
       productList.forEach(p => {
+        if (!p || !p.name || !p.cat || !p.price || p.name.trim() === "" || p.cat.trim() === "") return;
         if (filter !== "Tümü" && p.cat !== filter) return;
 
         const card = document.createElement("div");
@@ -961,22 +705,20 @@
           <h3>${p.name}</h3>
           <p>${p.desc}</p>
           <p><i>${p.cat}</i></p>
-          <button class="add-to-cart" onclick="addToCart('${p.name}')">Sepete Ekle</button>
+          <p class="price-stock">Fiyat: ${p.price} TL</p>
         `;
         container.appendChild(card);
       });
     }
 
     /* SORUMLULUK REDDİ */
-    const disclaimerBtn = document.getElementById("disclaimerBtn");
-    const disclaimerBox = document.getElementById("disclaimerBox");
     let disclaimerVisible = false;
     function toggleDisclaimer() {
+      const disclaimerBox = document.getElementById("disclaimerBox");
+      if (!disclaimerBox) return;
       disclaimerVisible = !disclaimerVisible;
       disclaimerBox.style.display = disclaimerVisible ? "block" : "none";
     }
-
   </script>
-
 </body>
 </html>
